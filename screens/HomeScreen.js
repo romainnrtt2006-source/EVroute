@@ -9,32 +9,7 @@ import {
   Alert,
 } from "react-native";
 import * as Notifications from "expo-notifications";
-
-// Hardcoded stations for now. Week 6's local storage work will replace/extend
-// this with data the user actually creates in CreateScreen.
-const MOCK_STATIONS = [
-  {
-    id: "1",
-    name: "Sarah's Home Charger",
-    city: "Newcastle",
-    latitude: -32.9283,
-    longitude: 151.7817,
-  },
-  {
-    id: "2",
-    name: "Callaghan Campus Charger",
-    city: "Newcastle",
-    latitude: -32.8936,
-    longitude: 151.7028,
-  },
-  {
-    id: "3",
-    name: "Tom's Garage Plug",
-    city: "Maitland",
-    latitude: -32.7326,
-    longitude: 151.5594,
-  },
-];
+import { useStorage } from "../storage/StorageContext";
 
 // Notifications need to actually display while the app is foregrounded,
 // otherwise the "Request to charge" demo would appear to do nothing.
@@ -47,15 +22,23 @@ Notifications.setNotificationHandler({
 });
 
 export default function HomeScreen({ navigation }) {
+  const { stations } = useStorage();
   const [search, setSearch] = useState("");
 
+  // Stations created from CreateScreen don't have a "city" field (the form
+  // only collects a name + map pin), so the search now matches against
+  // name as well as city, instead of city alone like the old mock data did.
   const filteredStations = useMemo(() => {
-    if (!search.trim()) return MOCK_STATIONS;
+    if (!search.trim()) return stations;
     const query = search.trim().toLowerCase();
-    return MOCK_STATIONS.filter((station) =>
-      station.city.toLowerCase().includes(query)
-    );
-  }, [search]);
+    return stations.filter((station) => {
+      const nameMatch = station.name.toLowerCase().includes(query);
+      const cityMatch = station.city
+        ? station.city.toLowerCase().includes(query)
+        : false;
+      return nameMatch || cityMatch;
+    });
+  }, [search, stations]);
 
   const handleRequestToCharge = async (station) => {
     const { status } = await Notifications.requestPermissionsAsync();
@@ -79,7 +62,9 @@ export default function HomeScreen({ navigation }) {
   const renderStation = ({ item }) => (
     <View style={styles.card}>
       <Text style={styles.cardTitle}>{item.name}</Text>
-      <Text style={styles.cardCity}>{item.city}</Text>
+      {item.city ? (
+        <Text style={styles.cardCity}>{item.city}</Text>
+      ) : null}
       <TouchableOpacity
         style={styles.requestButton}
         onPress={() => handleRequestToCharge(item)}
@@ -93,7 +78,7 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <TextInput
         style={styles.searchInput}
-        placeholder="Search by city..."
+        placeholder="Search by name or city..."
         value={search}
         onChangeText={setSearch}
       />
@@ -104,7 +89,7 @@ export default function HomeScreen({ navigation }) {
         renderItem={renderStation}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>No stations found for that city.</Text>
+          <Text style={styles.emptyText}>No stations found.</Text>
         }
       />
 

@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import FreeMapView from "../components/Map";
 import CameraModal from "./CameraModal";
+import { useStorage } from "../storage/StorageContext";
 
 // Newcastle, used as a sensible default map center until expo-location
 // (optional Week 5 stretch goal) picks the user's real position.
@@ -17,6 +18,7 @@ const DEFAULT_LATITUDE = -32.9283;
 const DEFAULT_LONGITUDE = 151.7817;
 
 export default function CreateScreen({ navigation }) {
+  const { addStation } = useStorage();
   const [name, setName] = useState("");
   const [photoUri, setPhotoUri] = useState(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -36,13 +38,11 @@ export default function CreateScreen({ navigation }) {
       return;
     }
 
-    // NOTE: this doesn't persist anywhere yet - the station is built here
-    // but never saved or handed back to HomeScreen. That's the Week 6
-    // local storage lab's job (see storage/StorageContext.js once it lands).
-    console.log("Station ready to save (not persisted yet):", {
-      name,
+    addStation({
+      name: name.trim(),
       photoUri,
-      pin,
+      latitude: pin.latitude,
+      longitude: pin.longitude,
     });
 
     navigation.goBack();
