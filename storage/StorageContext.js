@@ -8,84 +8,211 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // it works everywhere, at the cost of an async (not synchronous) API -
 // the useReducer + Context pattern from the lab stays the same either way.
 const STATIONS_KEY = "evroute.stations";
+const MY_BOOKINGS_KEY = "evroute.myBookings";
+const REQUESTS_RECEIVED_KEY = "evroute.requestsReceived";
 
-// Seed data so the list isn't empty on first launch, before the user has
-// created any stations of their own. Mirrors the old hardcoded
-// MOCK_STATIONS array HomeScreen used before this storage layer existed.
+// Seed data so every screen has something to show on first launch, before
+// the user has created stations/bookings of their own. Matches the sample
+// content from the wireframes (Marie's charger, Tom's charger, etc.).
 const SEED_STATIONS = [
   {
     id: "1",
-    name: "Sarah's Home Charger",
-    city: "Newcastle",
+    name: "Marie's charger",
+    type: "Type 2",
+    kw: 7,
+    pricePerKwh: 0.35,
+    availability: "Mon-Fri 6-10pm, weekends all day",
+    accessNotes: "Driveway on the left",
+    photoUri: null,
     latitude: -32.9283,
     longitude: 151.7817,
-    photoUri: null,
   },
   {
     id: "2",
-    name: "Callaghan Campus Charger",
-    city: "Newcastle",
+    name: "Tom's charger",
+    type: "CCS",
+    kw: 22,
+    pricePerKwh: 0.5,
+    availability: "Weekdays after 5pm",
+    accessNotes: "Garage roller door, text on arrival",
+    photoUri: null,
     latitude: -32.8936,
     longitude: 151.7028,
-    photoUri: null,
+  },
+];
+
+const SEED_MY_BOOKINGS = [
+  {
+    id: "b1",
+    stationName: "Marie's charger",
+    date: "Fri, 5 Sep",
+    timeSlot: "6:00 PM - 8:00 PM",
+    status: "waiting",
+    rating: null,
   },
   {
-    id: "3",
-    name: "Tom's Garage Plug",
-    city: "Maitland",
-    latitude: -32.7326,
-    longitude: 151.5594,
-    photoUri: null,
+    id: "b2",
+    stationName: "Tom's charger",
+    date: "Sat, 6 Sep",
+    timeSlot: "2:00 PM - 3:30 PM",
+    status: "confirmed",
+    rating: 5,
+  },
+  {
+    id: "b3",
+    stationName: "Alex's charger",
+    date: "Wed, 3 Sep",
+    timeSlot: "10:00 AM - 11:00 AM",
+    status: "declined",
+    rating: null,
+  },
+];
+
+// Bookings other people have sent for stations the current (mock) user
+// owns. There's no real multi-user backend here, so this is just a
+// separate mock list rather than being derived from real station
+// ownership - kept simple on purpose for a local-only demo app.
+const SEED_REQUESTS_RECEIVED = [
+  {
+    id: "r1",
+    requesterName: "Jordan D.",
+    date: "Fri, 5 Sep",
+    timeSlot: "6:00 PM - 8:00 PM",
+    message: "Hi, I'll pass by at 6pm",
+    status: "pending",
+  },
+  {
+    id: "r2",
+    requesterName: "Sam L.",
+    date: "Sat, 6 Sep",
+    timeSlot: "1:00 PM - 2:00 PM",
+    message: "",
+    status: "confirmed",
   },
 ];
 
 const StorageContext = createContext(null);
 
-function stationsReducer(state, action) {
+const initialState = {
+  stations: [],
+  myBookings: [],
+  requestsReceived: [],
+};
+
+function storageReducer(state, action) {
   switch (action.type) {
     case "HYDRATE":
-      // Replace in-memory state with whatever was loaded from disk.
-      return action.stations;
+      return action.payload;
     case "ADD_STATION":
-      return [...state, action.station];
+      return { ...state, stations: [...state.stations, action.station] };
+    case "ADD_BOOKING":
+      return { ...state, myBookings: [...state.myBookings, action.booking] };
+    case "SET_REQUEST_STATUS":
+      return {
+        ...state,
+        requestsReceived: state.requestsReceived.map((request) =>
+          request.id === action.id
+            ? { ...request, status: action.status }
+            : request
+        ),
+      };
     default:
       return state;
   }
 }
 
 export function StorageProvider({ children }) {
-  const [stations, dispatch] = useReducer(stationsReducer, []);
+  const [state, dispatch] = useReducer(storageReducer, initialState);
 
-  // Load stations once when the app starts. If nothing was saved yet
-  // (first run), fall back to the seed list above.
+  // Load everything once when the app starts. Each piece of data falls
+  // back to its own seed list if nothing was saved yet (first run).
   useEffect(() => {
-    AsyncStorage.getItem(STATIONS_KEY).then((raw) => {
-      if (raw) {
-        dispatch({ type: "HYDRATE", stations: JSON.parse(raw) });
-      } else {
-        dispatch({ type: "HYDRATE", stations: SEED_STATIONS });
-      }
-    });
+    async function hydrate() {
+      const [stationsRaw, bookingsRaw, requestsRaw] = await Promise.all([
+        AsyncStorage.getItem(STATIONS_KEY),
+        AsyncStorage.getItem(MY_BOOKINGS_KEY),
+        AsyncStorage.getItem(REQUESTS_RECEIVED_KEY),
+      ]);
+
+      dispatch({
+        type: "HYDRATE",
+        payload: {
+          stations: stationsRaw ? JSON.parse(stationsRaw) : SEED_STATIONS,
+          myBookings: bookingsRaw ? JSON.parse(bookingsRaw) : SEED_MY_BOOKINGS,
+          requestsReceived: requestsRaw
+            ? JSON.parse(requestsRaw)
+            : SEED_REQUESTS_RECEIVED,
+        },
+      });
+    }
+
+    hydrate();
   }, []);
 
-  // Persist every time the list changes, so new stations survive an app
-  // reload. JSON.stringify is enough here since a station is just plain
-  // strings/numbers - no need for a more complex serialization.
+  // Persist each list to its own key whenever it changes, so everything
+  // survives an app reload. JSON.stringify is enough since these are all
+  // plain strings/numbers - no need for a more complex serialization.
   useEffect(() => {
-    if (stations.length > 0) {
-      AsyncStorage.setItem(STATIONS_KEY, JSON.stringify(stations));
+    if (state.stations.length > 0) {
+      AsyncStorage.setItem(STATIONS_KEY, JSON.stringify(state.stations));
     }
-  }, [stations]);
+  }, [state.stations]);
+
+  useEffect(() => {
+    if (state.myBookings.length > 0) {
+      AsyncStorage.setItem(MY_BOOKINGS_KEY, JSON.stringify(state.myBookings));
+    }
+  }, [state.myBookings]);
+
+  useEffect(() => {
+    if (state.requestsReceived.length > 0) {
+      AsyncStorage.setItem(
+        REQUESTS_RECEIVED_KEY,
+        JSON.stringify(state.requestsReceived)
+      );
+    }
+  }, [state.requestsReceived]);
 
   const addStation = (station) => {
     dispatch({
       type: "ADD_STATION",
-      station: { ...station, id: Date.now().toString() },
+      station: {
+        // Sensible defaults for fields the Create Station form doesn't
+        // collect (type/price/availability), so this station still
+        // renders correctly on the Charger Details screen.
+        type: "Home charger",
+        kw: 7,
+        pricePerKwh: 0.3,
+        availability: "Contact host for availability",
+        accessNotes: "No notes provided",
+        ...station,
+        id: Date.now().toString(),
+      },
     });
   };
 
+  const addBooking = (booking) => {
+    dispatch({
+      type: "ADD_BOOKING",
+      booking: { ...booking, id: Date.now().toString(), status: "waiting" },
+    });
+  };
+
+  const setRequestStatus = (id, status) => {
+    dispatch({ type: "SET_REQUEST_STATUS", id, status });
+  };
+
   return (
-    <StorageContext.Provider value={{ stations, addStation }}>
+    <StorageContext.Provider
+      value={{
+        stations: state.stations,
+        myBookings: state.myBookings,
+        requestsReceived: state.requestsReceived,
+        addStation,
+        addBooking,
+        setRequestStatus,
+      }}
+    >
       {children}
     </StorageContext.Provider>
   );

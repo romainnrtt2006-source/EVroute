@@ -8,11 +8,14 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { colors, spacing, radii, typography, cardShadow } from "../constants/theme";
 
 // Mock login screen: no real authentication yet, just a form that
-// navigates to Home once "Log in" is pressed.
+// navigates to Home once "Log in" is pressed. "Continue with Google/Apple"
+// are also mocked (no real OAuth wired up) and just log in the same way -
+// implementing real social sign-in is out of scope for this course project.
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +23,11 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = () => {
     // No credential check: this is a UI-only mock for now.
-    navigation.replace("Home");
+    navigation.replace("Main");
+  };
+
+  const handleSignUp = () => {
+    Alert.alert("Sign up", "Account creation isn't built yet.");
   };
 
   return (
@@ -29,7 +36,7 @@ export default function LoginScreen({ navigation }) {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <Text style={styles.title}>EVRoute</Text>
-      <Text style={styles.subtitle}>Find and share EV charging points</Text>
+      <Text style={styles.subtitle}>Find chargers near you</Text>
 
       <View style={styles.form}>
         <TextInput

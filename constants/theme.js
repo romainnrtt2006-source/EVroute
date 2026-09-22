@@ -14,6 +14,11 @@ export const colors = {
   textFaint: "#9AA0A6",
   onPrimary: "#FFFFFF",
   danger: "#D64545",
+  // Booking/request status badges (My Bookings, Requests Received).
+  statusWaiting: "#B8860B",
+  statusConfirmed: "#0F9D58",
+  statusDeclined: "#D64545",
+  statusPending: "#B8860B",
 };
 
 export const spacing = {
