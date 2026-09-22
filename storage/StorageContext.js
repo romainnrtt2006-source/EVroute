@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useEffect, useReducer } from "react";
-import { MMKV } from "react-native-mmkv";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// react-native-mmkv is a native module: it needs a custom dev client
-// (`npx expo run:android` / `npx expo run:ios`, or an EAS "development"
-// build) - it will NOT work inside the plain Expo Go app. This matches
-// what the Week 6 lab uses, so keeping it here even though it means the
-// app can no longer be demoed from Expo Go without that extra build step.
-const storage = new MMKV();
+// Using AsyncStorage instead of the Week 6 lab's react-native-mmkv: MMKV is
+// a native module that isn't available in Expo Snack or plain Expo Go
+// (it needs a custom dev client), and the app needs to keep running in
+// Snack for live demos. AsyncStorage is part of the standard Expo SDK, so
+// it works everywhere, at the cost of an async (not synchronous) API -
+// the useReducer + Context pattern from the lab stays the same either way.
 const STATIONS_KEY = "evroute.stations";
 
 // Seed data so the list isn't empty on first launch, before the user has
@@ -59,20 +59,21 @@ export function StorageProvider({ children }) {
   // Load stations once when the app starts. If nothing was saved yet
   // (first run), fall back to the seed list above.
   useEffect(() => {
-    const raw = storage.getString(STATIONS_KEY);
-    if (raw) {
-      dispatch({ type: "HYDRATE", stations: JSON.parse(raw) });
-    } else {
-      dispatch({ type: "HYDRATE", stations: SEED_STATIONS });
-    }
+    AsyncStorage.getItem(STATIONS_KEY).then((raw) => {
+      if (raw) {
+        dispatch({ type: "HYDRATE", stations: JSON.parse(raw) });
+      } else {
+        dispatch({ type: "HYDRATE", stations: SEED_STATIONS });
+      }
+    });
   }, []);
 
-  // Persist to MMKV every time the list changes, so new stations survive
-  // an app reload. JSON.stringify is enough here since a station is just
-  // plain strings/numbers - no need for a more complex serialization.
+  // Persist every time the list changes, so new stations survive an app
+  // reload. JSON.stringify is enough here since a station is just plain
+  // strings/numbers - no need for a more complex serialization.
   useEffect(() => {
     if (stations.length > 0) {
-      storage.set(STATIONS_KEY, JSON.stringify(stations));
+      AsyncStorage.setItem(STATIONS_KEY, JSON.stringify(stations));
     }
   }, [stations]);
 
