@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "EVRoute",
+    "slug": "evroute",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#0F9D58"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "EVRoute uses the camera so you can attach a photo of your charging station when you add it."
+      }
+    },
+    "android": {
+      "package": "com.evroute.app",
+      "permissions": ["CAMERA"]
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "EVRoute uses the camera so you can attach a photo of your charging station when you add it."
+        }
+      ]
+    ]
+  }
+}

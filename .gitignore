@@ -1,0 +1,25 @@
+node_modules/
+.expo/
+dist/
+web-build/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+.DS_Store
+.env
+.env.local
+
+# macOS
+.metadata
+
+# Xcode / Android build outputs (in case a native project is ever ejected)
+ios/
+android/build/
+android/app/build/
+
+# Logs
+*.log
