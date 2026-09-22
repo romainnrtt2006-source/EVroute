@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import * as Notifications from "expo-notifications";
 import { useStorage } from "../storage/StorageContext";
+import { colors, spacing, radii, typography, cardShadow } from "../constants/theme";
 
 // Notifications need to actually display while the app is foregrounded,
 // otherwise the "Request to charge" demo would appear to do nothing.
@@ -79,6 +80,7 @@ export default function HomeScreen({ navigation }) {
       <TextInput
         style={styles.searchInput}
         placeholder="Search by name or city..."
+        placeholderTextColor={colors.textFaint}
         value={search}
         onChangeText={setSearch}
       />
@@ -106,69 +108,69 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    paddingHorizontal: 16,
-    paddingTop: 12,
+    backgroundColor: colors.background,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
   },
   searchInput: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    marginBottom: 12,
+    borderColor: colors.border,
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm + 2,
+    marginBottom: spacing.md,
     fontSize: 15,
+    backgroundColor: colors.surface,
+    color: colors.text,
   },
   listContent: {
     paddingBottom: 90,
   },
   card: {
-    borderWidth: 1,
-    borderColor: "#eee",
-    borderRadius: 10,
-    padding: 14,
-    marginBottom: 10,
-    backgroundColor: "#fafafa",
+    borderRadius: radii.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.md,
+    backgroundColor: colors.surface,
+    ...cardShadow,
   },
   cardTitle: {
-    fontSize: 16,
-    fontWeight: "600",
+    ...typography.heading,
     marginBottom: 2,
   },
   cardCity: {
-    fontSize: 13,
-    color: "#666",
-    marginBottom: 10,
+    ...typography.caption,
+    marginBottom: spacing.md,
   },
   requestButton: {
     alignSelf: "flex-start",
-    backgroundColor: "#0F9D58",
-    borderRadius: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    backgroundColor: colors.primary,
+    borderRadius: radii.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
   },
   requestButtonText: {
-    color: "#fff",
+    color: colors.onPrimary,
     fontSize: 13,
     fontWeight: "600",
   },
   emptyText: {
     textAlign: "center",
-    color: "#999",
-    marginTop: 40,
+    color: colors.textFaint,
+    marginTop: spacing.xxl + spacing.md,
   },
   addButton: {
     position: "absolute",
-    bottom: 20,
-    left: 16,
-    right: 16,
-    backgroundColor: "#0F9D58",
-    borderRadius: 10,
-    paddingVertical: 14,
+    bottom: spacing.xl,
+    left: spacing.lg,
+    right: spacing.lg,
+    backgroundColor: colors.primary,
+    borderRadius: radii.lg,
+    paddingVertical: spacing.md,
     alignItems: "center",
+    ...cardShadow,
   },
   addButtonText: {
-    color: "#fff",
+    color: colors.onPrimary,
     fontSize: 16,
     fontWeight: "700",
   },

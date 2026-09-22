@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { colors, spacing, radii, typography, cardShadow } from "../constants/theme";
 
 // Mock login screen: no real authentication yet, just a form that
 // navigates to Home once "Log in" is pressed.
@@ -30,30 +31,42 @@ export default function LoginScreen({ navigation }) {
       <Text style={styles.title}>EVRoute</Text>
       <Text style={styles.subtitle}>Find and share EV charging points</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        autoCapitalize="none"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+      <View style={styles.form}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor={colors.textFaint}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor={colors.textFaint}
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
 
-      <View style={styles.rememberRow}>
-        <Text style={styles.rememberLabel}>Remember me</Text>
-        <Switch value={rememberMe} onValueChange={setRememberMe} />
+        <View style={styles.rememberRow}>
+          <Text style={styles.rememberLabel}>Remember me</Text>
+          <Switch
+            value={rememberMe}
+            onValueChange={setRememberMe}
+            trackColor={{ true: colors.primary }}
+          />
+        </View>
+
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={handleLogin}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.loginButtonText}>Log in</Text>
+        </TouchableOpacity>
       </View>
-
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Log in</Text>
-      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 }
@@ -62,48 +75,52 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 24,
-    backgroundColor: "#fff",
+    paddingHorizontal: spacing.xl,
+    backgroundColor: colors.background,
   },
   title: {
-    fontSize: 32,
-    fontWeight: "bold",
+    ...typography.title,
     textAlign: "center",
-    color: "#0F9D58",
+    color: colors.primary,
+    marginBottom: spacing.xs,
   },
   subtitle: {
-    fontSize: 14,
+    ...typography.subtitle,
     textAlign: "center",
-    color: "#666",
-    marginBottom: 32,
+    marginBottom: spacing.xxl,
+  },
+  form: {
+    gap: spacing.md,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    marginBottom: 14,
+    borderColor: colors.border,
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
     fontSize: 16,
+    color: colors.text,
+    backgroundColor: colors.surface,
   },
   rememberRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
+    marginTop: spacing.xs,
+    marginBottom: spacing.sm,
   },
   rememberLabel: {
-    fontSize: 14,
-    color: "#333",
+    ...typography.body,
   },
   loginButton: {
-    backgroundColor: "#0F9D58",
-    borderRadius: 8,
-    paddingVertical: 14,
+    backgroundColor: colors.primary,
+    borderRadius: radii.md,
+    paddingVertical: spacing.md,
     alignItems: "center",
+    ...cardShadow,
   },
   loginButtonText: {
-    color: "#fff",
+    color: colors.onPrimary,
     fontSize: 16,
     fontWeight: "600",
   },

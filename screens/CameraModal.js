@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
+import { colors, spacing, radii } from "../constants/theme";
 
 // Full-screen modal that lets the user snap a photo of their charging
 // station. Kept separate from CreateScreen so the permission flow and
@@ -78,17 +79,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 30,
-    paddingVertical: 24,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xl,
     backgroundColor: "#000",
   },
   shutterButton: {
     width: 64,
     height: 64,
-    borderRadius: 32,
+    borderRadius: radii.round,
     backgroundColor: "#fff",
     borderWidth: 4,
-    borderColor: "#0F9D58",
+    borderColor: colors.primary,
   },
   cancelText: {
     color: "#fff",
@@ -98,23 +99,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 30,
+    paddingHorizontal: spacing.xl + spacing.sm,
   },
   permissionText: {
     color: "#fff",
     fontSize: 15,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: spacing.lg,
   },
   permissionButton: {
-    backgroundColor: "#0F9D58",
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    marginBottom: 16,
+    backgroundColor: colors.primary,
+    borderRadius: radii.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    marginBottom: spacing.lg,
   },
   permissionButtonText: {
-    color: "#fff",
+    color: colors.onPrimary,
     fontWeight: "600",
   },
 });

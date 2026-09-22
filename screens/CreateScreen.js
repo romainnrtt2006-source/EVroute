@@ -11,6 +11,7 @@ import {
 import FreeMapView from "../components/Map";
 import CameraModal from "./CameraModal";
 import { useStorage } from "../storage/StorageContext";
+import { colors, spacing, radii, typography, cardShadow } from "../constants/theme";
 
 // Newcastle, used as a sensible default map center until expo-location
 // (optional Week 5 stretch goal) picks the user's real position.
@@ -53,6 +54,7 @@ export default function CreateScreen({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Station name"
+        placeholderTextColor={colors.textFaint}
         value={name}
         onChangeText={setName}
       />
@@ -95,54 +97,60 @@ export default function CreateScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    padding: 16,
+    backgroundColor: colors.background,
+    padding: spacing.lg,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    borderColor: colors.border,
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
     fontSize: 16,
-    marginBottom: 12,
+    marginBottom: spacing.md,
+    backgroundColor: colors.surface,
+    color: colors.text,
   },
   photoButton: {
-    backgroundColor: "#eee",
-    borderRadius: 8,
-    paddingVertical: 12,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.md,
+    paddingVertical: spacing.md,
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   photoButtonText: {
     fontWeight: "600",
-    color: "#333",
+    color: colors.text,
   },
   preview: {
     width: "100%",
     height: 160,
-    borderRadius: 8,
-    marginBottom: 12,
+    borderRadius: radii.md,
+    marginBottom: spacing.md,
   },
   mapHint: {
-    fontSize: 13,
-    color: "#666",
-    marginBottom: 6,
+    ...typography.caption,
+    marginBottom: spacing.sm,
   },
   mapContainer: {
     flex: 1,
-    borderRadius: 8,
+    borderRadius: radii.md,
     overflow: "hidden",
-    marginBottom: 12,
+    marginBottom: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   saveButton: {
-    backgroundColor: "#0F9D58",
-    borderRadius: 8,
-    paddingVertical: 14,
+    backgroundColor: colors.primary,
+    borderRadius: radii.md,
+    paddingVertical: spacing.md,
     alignItems: "center",
+    ...cardShadow,
   },
   saveButtonText: {
-    color: "#fff",
+    color: colors.onPrimary,
     fontSize: 16,
     fontWeight: "700",
   },
