@@ -91,6 +91,24 @@ const SEED_REQUESTS_RECEIVED = [
   },
 ];
 
+// Defaults for fields older/stale persisted stations might not have (e.g.
+// ones saved by an earlier version of the app, before price/type/etc.
+// existed). Applied both to freshly created stations and to anything
+// loaded back out of AsyncStorage, so a schema change here can never
+// crash a screen that expects these fields to be present.
+const STATION_DEFAULTS = {
+  type: "Home charger",
+  kw: 7,
+  pricePerKwh: 0.3,
+  availability: "Contact host for availability",
+  accessNotes: "No notes provided",
+  photoUri: null,
+};
+
+function withStationDefaults(station) {
+  return { ...STATION_DEFAULTS, ...station };
+}
+
 const StorageContext = createContext(null);
 
 const initialState = {
@@ -134,10 +152,14 @@ export function StorageProvider({ children }) {
         AsyncStorage.getItem(REQUESTS_RECEIVED_KEY),
       ]);
 
+      const loadedStations = stationsRaw
+        ? JSON.parse(stationsRaw).map(withStationDefaults)
+        : SEED_STATIONS;
+
       dispatch({
         type: "HYDRATE",
         payload: {
-          stations: stationsRaw ? JSON.parse(stationsRaw) : SEED_STATIONS,
+          stations: loadedStations,
           myBookings: bookingsRaw ? JSON.parse(bookingsRaw) : SEED_MY_BOOKINGS,
           requestsReceived: requestsRaw
             ? JSON.parse(requestsRaw)
@@ -176,18 +198,10 @@ export function StorageProvider({ children }) {
   const addStation = (station) => {
     dispatch({
       type: "ADD_STATION",
-      station: {
-        // Sensible defaults for fields the Create Station form doesn't
-        // collect (type/price/availability), so this station still
-        // renders correctly on the Charger Details screen.
-        type: "Home charger",
-        kw: 7,
-        pricePerKwh: 0.3,
-        availability: "Contact host for availability",
-        accessNotes: "No notes provided",
-        ...station,
-        id: Date.now().toString(),
-      },
+      // withStationDefaults covers fields the Create Station form doesn't
+      // collect (type/price/availability), so this station still renders
+      // correctly on the Charger Details screen.
+      station: { ...withStationDefaults(station), id: Date.now().toString() },
     });
   };
 
