@@ -1,9 +1,3 @@
-// Shared Leaflet + OpenStreetMap page, rendered inside a WebView (native)
-// or an iframe (web). Using Leaflet/OSM instead of Google Maps avoids
-// needing a paid Maps API key, per feedback from the teacher.
-//
-// Tapping the map drops a single marker and reports its coordinates back
-// to React Native via postMessage, which both Map.js and Map.web.js listen for.
 export function buildMapHtml(initialLatitude, initialLongitude) {
   return `
 <!DOCTYPE html>
@@ -32,8 +26,6 @@ export function buildMapHtml(initialLatitude, initialLongitude) {
 
       function sendCoordinates(lat, lng) {
         const payload = JSON.stringify({ latitude: lat, longitude: lng });
-        // ReactNativeWebView.postMessage is injected by react-native-webview
-        // on native; on web we fall back to window.parent.postMessage.
         if (window.ReactNativeWebView) {
           window.ReactNativeWebView.postMessage(payload);
         } else if (window.parent) {

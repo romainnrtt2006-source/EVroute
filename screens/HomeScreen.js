@@ -11,17 +11,9 @@ import FreeMapView from "../components/Map";
 import { useStorage } from "../storage/StorageContext";
 import { colors, spacing, radii, typography, cardShadow } from "../constants/theme";
 
-// Newcastle, used as a sensible default map center until expo-location
-// (optional Week 5 stretch goal) picks the user's real position.
 const DEFAULT_LATITUDE = -32.9283;
 const DEFAULT_LONGITUDE = 151.7817;
 
-// "Search by city" screen from the wireframes: a search box, a
-// "Find chargers in this area" button, a map of pins, and a list of
-// matching chargers below it. There's no geocoding here (no backend/API
-// for turning a city name into coordinates), so "search" just filters the
-// existing stations by name/city and re-centers the pin list - it doesn't
-// move the map to a real location for an arbitrary typed city.
 export default function HomeScreen({ navigation }) {
   const { stations } = useStorage();
   const [cityInput, setCityInput] = useState("");

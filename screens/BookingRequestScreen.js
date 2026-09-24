@@ -13,13 +13,8 @@ import { colors, spacing, radii, typography, cardShadow } from "../constants/the
 
 const TIME_SLOTS = ["6:00 PM", "8:00 PM"];
 
-// Assumed constant used only to show a rough cost estimate on this screen -
-// there's no real charging session to measure, so this is a stand-in for
-// "how much power a typical booking would use".
 const ESTIMATED_KWH = 14;
 
-// Local notification needs to actually display while the app is
-// foregrounded, otherwise sending a request would appear to do nothing.
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -28,11 +23,6 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// "Booking request" screen from the wireframes. Date is a free-text field
-// rather than a real date picker (no extra date-picker dependency added
-// for this), and the two time slots are just the ones shown in the
-// wireframe rather than dynamically computed from the station's
-// availability.
 export default function BookingRequestScreen({ route, navigation }) {
   const { stationId } = route.params;
   const { stations, addBooking } = useStorage();
@@ -62,7 +52,6 @@ export default function BookingRequestScreen({ route, navigation }) {
 
     const { status } = await Notifications.requestPermissionsAsync();
     if (status === "granted") {
-      // Confirmation for the person sending the request.
       await Notifications.scheduleNotificationAsync({
         content: {
           title: "Booking request sent",
@@ -71,11 +60,6 @@ export default function BookingRequestScreen({ route, navigation }) {
         trigger: null,
       });
 
-      // There's no backend/push server here, so a real "notify the other
-      // user's phone" isn't possible - this second notification simulates
-      // what the charger's owner would receive on a real deployment,
-      // addressing the "how does the owner know someone wants to charge?"
-      // feedback without needing a server to route it to a different device.
       await Notifications.scheduleNotificationAsync({
         content: {
           title: "New booking request",

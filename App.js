@@ -11,16 +11,8 @@ import { StorageProvider } from "./storage/StorageContext";
 
 const Stack = createNativeStackNavigator();
 
-// Root stack: Login, then the bottom-tab "Main" area (Home / My Bookings /
-// Requests Received / Profile), plus a couple of screens that are pushed
-// on top of the tabs rather than being tabs themselves (Create, Charger
-// Detail, Booking Request) - matches how the wireframes flow: you land on
-// a tab, then drill into detail screens from there.
 export default function App() {
   return (
-    // StorageProvider wraps the whole navigator so every screen can reach
-    // the shared app data via useStorage(), regardless of which screen
-    // it's currently on.
     <StorageProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">

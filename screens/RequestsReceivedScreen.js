@@ -10,14 +10,6 @@ const STATUS_COLORS = {
   declined: colors.statusDeclined,
 };
 
-// "Requests received" screen from the wireframes: bookings other people
-// have sent for stations the current user owns. Accept/Decline only show
-// for requests still "pending" - once handled, the row just shows its
-// final status like the "Sam L." example in the wireframe.
-// Same simulation idea as the booking request notification: with no
-// backend, we can't push a notification to the requester's actual phone,
-// so this fires locally to demonstrate the "requester gets told the
-// outcome" half of the notification flow.
 async function notifyRequester(requesterName, outcome) {
   const { status } = await Notifications.requestPermissionsAsync();
   if (status !== "granted") return;

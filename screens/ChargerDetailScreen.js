@@ -3,9 +3,6 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useStorage } from "../storage/StorageContext";
 import { colors, spacing, radii, typography, cardShadow } from "../constants/theme";
 
-// "Charger details" screen from the wireframes. Reached by tapping a
-// station card on Home; shows the full info for one station and lets the
-// user move on to Booking Request.
 export default function ChargerDetailScreen({ route, navigation }) {
   const { stationId } = route.params;
   const { stations } = useStorage();

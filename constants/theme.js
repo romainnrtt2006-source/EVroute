@@ -1,8 +1,3 @@
-// Shared design tokens so every screen uses the same colors, spacing and
-// radii instead of each one picking its own numbers. Deliberately just a
-// plain object of values (no UI library) - the goal is consistency, not a
-// full design system.
-
 export const colors = {
   primary: "#0F9D58",
   primaryDark: "#0B7A43",
@@ -14,7 +9,6 @@ export const colors = {
   textFaint: "#9AA0A6",
   onPrimary: "#FFFFFF",
   danger: "#D64545",
-  // Booking/request status badges (My Bookings, Requests Received).
   statusWaiting: "#B8860B",
   statusConfirmed: "#0F9D58",
   statusDeclined: "#D64545",
@@ -62,8 +56,6 @@ export const typography = {
   },
 };
 
-// A light shadow used on cards/buttons that should look "raised". Split by
-// platform since elevation (Android) and shadow* (iOS) aren't the same API.
 export const cardShadow = {
   shadowColor: "#000",
   shadowOffset: { width: 0, height: 1 },

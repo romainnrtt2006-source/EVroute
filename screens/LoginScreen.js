@@ -12,17 +12,12 @@ import {
 } from "react-native";
 import { colors, spacing, radii, typography, cardShadow } from "../constants/theme";
 
-// Mock login screen: no real authentication yet, just a form that
-// navigates to Home once "Log in" is pressed. "Continue with Google/Apple"
-// are also mocked (no real OAuth wired up) and just log in the same way -
-// implementing real social sign-in is out of scope for this course project.
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleLogin = () => {
-    // No credential check: this is a UI-only mock for now.
     navigation.replace("Main");
   };
 
@@ -72,6 +67,21 @@ export default function LoginScreen({ navigation }) {
           activeOpacity={0.85}
         >
           <Text style={styles.loginButtonText}>Log in</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.orText}>or</Text>
+
+        <TouchableOpacity style={styles.socialButton} onPress={handleLogin}>
+          <Text style={styles.socialButtonText}>Continue with Google</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.socialButton} onPress={handleLogin}>
+          <Text style={styles.socialButtonText}>Continue with Apple</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleSignUp}>
+          <Text style={styles.signUpText}>
+            Don't have an account? Sign up
+          </Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -130,5 +140,27 @@ const styles = StyleSheet.create({
     color: colors.onPrimary,
     fontSize: 16,
     fontWeight: "600",
+  },
+  orText: {
+    ...typography.caption,
+    textAlign: "center",
+    marginTop: spacing.xs,
+  },
+  socialButton: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.md,
+    paddingVertical: spacing.sm + 2,
+    alignItems: "center",
+  },
+  socialButtonText: {
+    ...typography.body,
+    fontWeight: "600",
+  },
+  signUpText: {
+    ...typography.caption,
+    textAlign: "center",
+    color: colors.primary,
+    marginTop: spacing.xs,
   },
 });

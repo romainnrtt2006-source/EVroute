@@ -10,9 +10,6 @@ import { colors } from "../constants/theme";
 
 const Tab = createBottomTabNavigator();
 
-// Simple text-emoji icons instead of pulling in an icon library - keeps
-// the dependency list small, which matters for something that has to stay
-// explainable in a short course project.
 const TAB_ICONS = {
   Home: "\u{1F50D}",
   MyBookings: "\u{1F4C5}",

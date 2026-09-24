@@ -2,9 +2,6 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { colors, spacing, radii, typography, cardShadow } from "../constants/theme";
 
-// Static mock profile - there's no real account system yet (Login is a
-// mock too), so this is just a placeholder screen matching the wireframe
-// until user accounts are a real feature.
 const MOCK_USER = {
   name: "Romain N.",
   chargeCount: 3,

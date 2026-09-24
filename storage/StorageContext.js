@@ -1,19 +1,12 @@
 import React, { createContext, useContext, useEffect, useReducer } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Using AsyncStorage instead of the Week 6 lab's react-native-mmkv: MMKV is
-// a native module that isn't available in Expo Snack or plain Expo Go
-// (it needs a custom dev client), and the app needs to keep running in
-// Snack for live demos. AsyncStorage is part of the standard Expo SDK, so
-// it works everywhere, at the cost of an async (not synchronous) API -
-// the useReducer + Context pattern from the lab stays the same either way.
+// AsyncStorage instead of react-native-mmkv: MMKV needs a custom dev client
+// and doesn't run in Expo Snack.
 const STATIONS_KEY = "evroute.stations";
 const MY_BOOKINGS_KEY = "evroute.myBookings";
 const REQUESTS_RECEIVED_KEY = "evroute.requestsReceived";
 
-// Seed data so every screen has something to show on first launch, before
-// the user has created stations/bookings of their own. Matches the sample
-// content from the wireframes (Marie's charger, Tom's charger, etc.).
 const SEED_STATIONS = [
   {
     id: "1",
@@ -68,10 +61,6 @@ const SEED_MY_BOOKINGS = [
   },
 ];
 
-// Bookings other people have sent for stations the current (mock) user
-// owns. There's no real multi-user backend here, so this is just a
-// separate mock list rather than being derived from real station
-// ownership - kept simple on purpose for a local-only demo app.
 const SEED_REQUESTS_RECEIVED = [
   {
     id: "r1",
@@ -91,11 +80,8 @@ const SEED_REQUESTS_RECEIVED = [
   },
 ];
 
-// Defaults for fields older/stale persisted stations might not have (e.g.
-// ones saved by an earlier version of the app, before price/type/etc.
-// existed). Applied both to freshly created stations and to anything
-// loaded back out of AsyncStorage, so a schema change here can never
-// crash a screen that expects these fields to be present.
+// Applied to loaded and newly created stations so older saved data
+// missing newer fields doesn't crash the UI.
 const STATION_DEFAULTS = {
   type: "Home charger",
   kw: 7,
@@ -142,8 +128,6 @@ function storageReducer(state, action) {
 export function StorageProvider({ children }) {
   const [state, dispatch] = useReducer(storageReducer, initialState);
 
-  // Load everything once when the app starts. Each piece of data falls
-  // back to its own seed list if nothing was saved yet (first run).
   useEffect(() => {
     async function hydrate() {
       const [stationsRaw, bookingsRaw, requestsRaw] = await Promise.all([
@@ -171,9 +155,6 @@ export function StorageProvider({ children }) {
     hydrate();
   }, []);
 
-  // Persist each list to its own key whenever it changes, so everything
-  // survives an app reload. JSON.stringify is enough since these are all
-  // plain strings/numbers - no need for a more complex serialization.
   useEffect(() => {
     if (state.stations.length > 0) {
       AsyncStorage.setItem(STATIONS_KEY, JSON.stringify(state.stations));
@@ -198,9 +179,6 @@ export function StorageProvider({ children }) {
   const addStation = (station) => {
     dispatch({
       type: "ADD_STATION",
-      // withStationDefaults covers fields the Create Station form doesn't
-      // collect (type/price/availability), so this station still renders
-      // correctly on the Charger Details screen.
       station: { ...withStationDefaults(station), id: Date.now().toString() },
     });
   };
@@ -232,9 +210,6 @@ export function StorageProvider({ children }) {
   );
 }
 
-// Small hook wrapper so screens don't need to import useContext + the
-// context object separately, and so a missing <StorageProvider> higher up
-// the tree fails loudly instead of returning undefined silently.
 export function useStorage() {
   const context = useContext(StorageContext);
   if (!context) {

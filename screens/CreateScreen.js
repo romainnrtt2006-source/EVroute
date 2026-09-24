@@ -13,8 +13,7 @@ import CameraModal from "./CameraModal";
 import { useStorage } from "../storage/StorageContext";
 import { colors, spacing, radii, typography, cardShadow } from "../constants/theme";
 
-// Newcastle, used as a sensible default map center until expo-location
-// (optional Week 5 stretch goal) picks the user's real position.
+// Newcastle - default map center until real geolocation is added
 const DEFAULT_LATITUDE = -32.9283;
 const DEFAULT_LONGITUDE = 151.7817;
 

@@ -3,9 +3,6 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { colors, spacing, radii } from "../constants/theme";
 
-// Full-screen modal that lets the user snap a photo of their charging
-// station. Kept separate from CreateScreen so the permission flow and
-// camera lifecycle don't clutter the main form.
 export default function CameraModal({ visible, onClose, onPhotoTaken }) {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef(null);
@@ -24,7 +21,6 @@ export default function CameraModal({ visible, onClose, onPhotoTaken }) {
     }
   };
 
-  // Permission hasn't loaded yet.
   if (!permission) {
     return null;
   }
