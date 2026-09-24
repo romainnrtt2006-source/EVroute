@@ -1,3 +1,5 @@
+// AI-assisted: this embedded Leaflet/OpenStreetMap HTML/JS was written
+// with AI help.
 export function buildMapHtml(initialLatitude, initialLongitude) {
   return `
 <!DOCTYPE html>

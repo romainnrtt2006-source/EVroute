@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useReducer } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// AI-assisted: the useReducer + Context + AsyncStorage persistence pattern
+// in this file was designed and written with AI help.
 // AsyncStorage instead of react-native-mmkv: MMKV needs a custom dev client
 // and doesn't run in Expo Snack.
 const STATIONS_KEY = "evroute.stations";

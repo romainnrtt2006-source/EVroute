@@ -10,6 +10,8 @@ const STATUS_COLORS = {
   declined: colors.statusDeclined,
 };
 
+// AI-assisted: the notifyRequester simulation (Accept/Decline notifying
+// the requester) was designed and written with AI help.
 async function notifyRequester(requesterName, outcome) {
   const { status } = await Notifications.requestPermissionsAsync();
   if (status !== "granted") return;

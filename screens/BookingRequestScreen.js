@@ -50,6 +50,8 @@ export default function BookingRequestScreen({ route, navigation }) {
       message: message.trim(),
     });
 
+    // AI-assisted: the two-way notification simulation (requester +
+    // "owner") below was designed and written with AI help.
     const { status } = await Notifications.requestPermissionsAsync();
     if (status === "granted") {
       await Notifications.scheduleNotificationAsync({

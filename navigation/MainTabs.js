@@ -8,6 +8,8 @@ import RequestsReceivedScreen from "../screens/RequestsReceivedScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import { colors } from "../constants/theme";
 
+// AI-assisted: this bottom-tab navigator and its nesting inside the root
+// stack (see App.js) were designed and written with AI help.
 const Tab = createBottomTabNavigator();
 
 const TAB_ICONS = {
