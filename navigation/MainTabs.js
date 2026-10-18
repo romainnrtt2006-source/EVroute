@@ -1,49 +1,65 @@
 import React from "react";
-import { Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
 
 import HomeScreen from "../screens/HomeScreen";
-import MyBookingsScreen from "../screens/MyBookingsScreen";
-import RequestsReceivedScreen from "../screens/RequestsReceivedScreen";
+import BookingsScreen from "../screens/BookingsScreen";
+import CreateScreen from "../screens/CreateScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import { useStorage } from "../storage/StorageContext";
 import { colors } from "../constants/theme";
 
 // AI-assisted: this bottom-tab navigator and its nesting inside the root
 // stack (see App.js) were designed and written with AI help.
+// The four tabs match the wireframes: Search, Bookings, Add, Profile.
 const Tab = createBottomTabNavigator();
 
 const TAB_ICONS = {
-  Home: "\u{1F50D}",
-  MyBookings: "\u{1F4C5}",
-  RequestsReceived: "\u{1F4E5}",
-  Profile: "\u{1F464}",
+  Search: ["search", "search-outline"],
+  Bookings: ["calendar", "calendar-outline"],
+  Add: ["add-circle", "add-circle-outline"],
+  Profile: ["person", "person-outline"],
 };
 
 export default function MainTabs() {
+  const { pendingRequestCount } = useStorage();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textFaint,
-        tabBarIcon: () => (
-          <Text style={{ fontSize: 18 }}>{TAB_ICONS[route.name]}</Text>
+        tabBarLabelStyle: { fontSize: 12, fontWeight: "600" },
+        headerTitleStyle: { fontWeight: "800" },
+        headerShadowVisible: false,
+        tabBarIcon: ({ focused, color, size }) => (
+          <Ionicons
+            name={TAB_ICONS[route.name][focused ? 0 : 1]}
+            size={size}
+            color={color}
+          />
         ),
       })}
     >
       <Tab.Screen
-        name="Home"
+        name="Search"
         component={HomeScreen}
-        options={{ title: "EVRoute" }}
+        options={{ title: "EVRoute", tabBarLabel: "Search" }}
       />
       <Tab.Screen
-        name="MyBookings"
-        component={MyBookingsScreen}
-        options={{ title: "My Bookings" }}
+        name="Bookings"
+        component={BookingsScreen}
+        options={{
+          title: "Bookings",
+          tabBarBadge:
+            pendingRequestCount > 0 ? pendingRequestCount : undefined,
+          tabBarBadgeStyle: { backgroundColor: colors.danger, fontSize: 11 },
+        }}
       />
       <Tab.Screen
-        name="RequestsReceived"
-        component={RequestsReceivedScreen}
-        options={{ title: "Requests" }}
+        name="Add"
+        component={CreateScreen}
+        options={{ title: "Add my charger", tabBarLabel: "Add" }}
       />
       <Tab.Screen
         name="Profile"
