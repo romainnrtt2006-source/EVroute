@@ -1,32 +1,37 @@
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import { StyleSheet } from "react-native";
 import { WebView } from "react-native-webview";
-import { buildMapHtml } from "./mapHtml";
+import { useMapBridge } from "./useMapBridge";
 
-export default function FreeMapView({ latitude, longitude, onMapPress }) {
-  const html = buildMapHtml(latitude, longitude);
+// Phone version: the Leaflet page runs inside a WebView.
+// Same props as Map.web.js — see useMapBridge.js.
+export default function StationMap(props) {
+  const webViewRef = useRef(null);
 
-  const handleMessage = (event) => {
-    try {
-      const coords = JSON.parse(event.nativeEvent.data);
-      onMapPress(coords);
-    } catch (error) {
-      console.warn("Could not parse map tap coordinates", error);
-    }
-  };
+  const post = useCallback((data) => {
+    webViewRef.current?.injectJavaScript(
+      `window.applyUpdate && window.applyUpdate(${JSON.stringify(data)}); true;`,
+    );
+  }, []);
+
+  const { html, handleMessage } = useMapBridge(props, post);
 
   return (
     <WebView
+      ref={webViewRef}
       originWhitelist={["*"]}
       source={{ html }}
       style={styles.webview}
-      onMessage={handleMessage}
+      onMessage={(event) => handleMessage(event.nativeEvent.data)}
+      javaScriptEnabled
+      domStorageEnabled
+      nestedScrollEnabled
+      scrollEnabled={false}
+      setSupportMultipleWindows={false}
     />
   );
 }
 
 const styles = StyleSheet.create({
-  webview: {
-    flex: 1,
-  },
+  webview: { flex: 1, backgroundColor: "#e8eef2" },
 });
